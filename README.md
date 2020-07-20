@@ -1,8 +1,8 @@
 # Mama Money Assessment Project
 
 This project is a REST implementation, intended to simulate a user making use of USSD
-to transfer money from South Africa to another country. For purposes of illistration,
-two countries where chosen namely Kenya and Malawi.
+to transfer money from South Africa to another country. For purposes of illustration,
+two countries were chosen namely Kenya and Malawi.
 
 The goal is to guide a user through a 4 step process in order to complete the
 transaction. These 4 steps will be the 4 screens a user will be presented with.
