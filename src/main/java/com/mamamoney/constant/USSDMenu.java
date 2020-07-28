@@ -2,7 +2,7 @@ package com.mamamoney.constant;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.List;
+import java.util.Map;
 
 import com.mamamoney.exception.MenuFlowException;
 
@@ -10,7 +10,7 @@ public enum USSDMenu {
 	INSTANCE {
 
 		@Override
-		public String getMessage(List<String> parameters) throws MenuFlowException {
+		public String getMessage(Map<USSDMenu, String> parameters) throws MenuFlowException {
 			// No message available at initialization
 			return null;
 		}
@@ -30,7 +30,7 @@ public enum USSDMenu {
 	WELCOME_SCREEN {
 
 		@Override
-		public String getMessage(List<String> parameters) throws MenuFlowException {
+		public String getMessage(Map<USSDMenu, String> parameters) throws MenuFlowException {
 			return "Welcome to Mama Money! Where would you like to send money today?" + System.lineSeparator() + "1) "
 					+ Country.KENYA.getDisplayName() + System.lineSeparator() + "2) " + Country.MALAWI.getDisplayName();
 		}
@@ -49,13 +49,13 @@ public enum USSDMenu {
 	
 	TRANSACTION_SCREEN {
 		@Override
-		public String getMessage(List<String> parameters) throws MenuFlowException {
-			if (parameters == null || parameters.isEmpty() || parameters.get(0).isBlank()
-					|| !"12".contains(parameters.get(0))) {
+		public String getMessage(Map<USSDMenu, String> parameters) throws MenuFlowException {
+			if (parameters == null || parameters.isEmpty() || parameters.get(WELCOME_SCREEN).isBlank()
+					|| !"12".contains(parameters.get(WELCOME_SCREEN))) {
 				throw new MenuFlowException("Invalid input found");
 			}
 			
-			String selectedCountry = parameters.get(0);
+			String selectedCountry = parameters.get(WELCOME_SCREEN);
 			Country country = null;
 			
 			switch(selectedCountry) {
@@ -85,15 +85,15 @@ public enum USSDMenu {
 	CONFIRMATION_SCREEN {
 
 		@Override
-		public String getMessage(List<String> parameters) throws MenuFlowException {
-			if (parameters == null || parameters.size() < 2 || parameters.get(0).isBlank()
-					|| !"12".contains(parameters.get(0)) || parameters.get(1).isBlank()
-					|| !parameters.get(1).matches("\\d+")) {
+		public String getMessage(Map<USSDMenu, String> parameters) throws MenuFlowException {
+			if (parameters == null || parameters.size() < 2 || parameters.get(WELCOME_SCREEN).isBlank()
+					|| !"12".contains(parameters.get(WELCOME_SCREEN)) || parameters.get(TRANSACTION_SCREEN).isBlank()
+					|| !parameters.get(TRANSACTION_SCREEN).matches("\\d+")) {
 				throw new MenuFlowException("Invalid input found");
 			}
 			
-			String selectedCountry = parameters.get(0);
-			String amount = parameters.get(1);
+			String selectedCountry = parameters.get(WELCOME_SCREEN);
+			String amount = parameters.get(TRANSACTION_SCREEN);
 			BigDecimal transferAmount = null;
 			Country country = null;
 			
@@ -135,7 +135,7 @@ public enum USSDMenu {
 	THANK_YOU_SCREEN {
 
 		@Override
-		public String getMessage(List<String> parameters) throws MenuFlowException {
+		public String getMessage(Map<USSDMenu, String> parameters) throws MenuFlowException {
 			return "Thank you for using Mama Money";
 		}
 
@@ -151,7 +151,7 @@ public enum USSDMenu {
 		
 	};
 	
-	public abstract String getMessage(List<String> parameters) throws MenuFlowException;
+	public abstract String getMessage(Map<USSDMenu, String> parameters) throws MenuFlowException;
 	
 	public abstract USSDMenu getNextMenu();
 	

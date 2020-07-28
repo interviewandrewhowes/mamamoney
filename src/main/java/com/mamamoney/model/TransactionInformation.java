@@ -1,13 +1,12 @@
 package com.mamamoney.model;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.mamamoney.constant.USSDMenu;
 import com.mamamoney.exception.MenuFlowException;
 
-import lombok.Builder;
 import lombok.Getter;
 
 public class TransactionInformation {
@@ -17,12 +16,14 @@ public class TransactionInformation {
 	
 	private USSDMenu activeMenu;
 	
-	@Getter
-	private final List<String> parameters = new ArrayList<>();
+	private final Map<USSDMenu, String> parameters = new HashMap<>();
+
+	public static TransactionInformation newInstance() {
+		return new TransactionInformation();
+	}
 	
-	@Builder
-	private TransactionInformation(USSDMenu activeMenu) {
-		this.activeMenu = activeMenu;
+	private TransactionInformation() {
+		this.activeMenu = USSDMenu.INSTANCE;
 		
 		lastReponse = LocalDateTime.now();
 	}
@@ -35,7 +36,7 @@ public class TransactionInformation {
 			
 			activeMenu = activeMenu.getNextMenu();
 		} catch (MenuFlowException e) {
-			parameters.remove(parameters.size() - 1);
+			parameters.remove(activeMenu);
 			
 			result = activeMenu.getMessage(parameters);
 		}
@@ -45,7 +46,12 @@ public class TransactionInformation {
 		return result;
 	}
 	
+	public void saveInput(String value) {
+		parameters.put(activeMenu, value);
+	}
+	
 	public boolean hasNextMenuScreen() {
 		return activeMenu.hasNextMenuScreen();
 	}
+
 }
